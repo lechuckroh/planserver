@@ -1,4 +1,6 @@
 # planserver
+[![Build Status](https://travis-ci.org/lechuckroh/planserver.svg?branch=develop)](https://travis-ci.org/lechuckroh/planserver)
+
 Plan Server is a server to manage execution of planning engines.
 
 ## Requirements
@@ -16,8 +18,7 @@ or
 - [ ] Online PlanNode Management
 
 ## Build
-
-### Golang & dep
+### with Golang
 Make sure `GOPATH` environment variable is set.
 ```bash
 $ go get github.com/lechuckroh/planserver
@@ -29,7 +30,7 @@ You can find binaries at:
 * `app/lb/lb-app-local`
 * `app/node/node-app-local`
 
-### Docker
+### with Docker
 To build with docker:
 ```bash
 $ make docker-build
