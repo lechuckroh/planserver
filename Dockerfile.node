@@ -1,0 +1,21 @@
+FROM alpine:latest
+
+LABEL MAINTAINER="Lechuck Roh <lechuckroh@gmail.com>"
+
+# install curl
+RUN apk add --update curl && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /app
+
+# copy files
+ADD ./app/node/node-app /app
+
+WORKDIR /app
+
+VOLUME ["/app/logs"]
+
+EXPOSE 80
+
+HEALTHCHECK --interval=5s --timeout=3s CMD curl --fail http://localhost:80/healthcheck || exit 1
+
+ENTRYPOINT ["./node-app"]
