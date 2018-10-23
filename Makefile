@@ -5,7 +5,10 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 DEP=dep
 
+# environment variables
 VERSION ?= 3
+DOCKER_REGISTRY ?= 192.168.2.22:5080
+DOCKER_REGISTRY_PROJECT ?= planserver
 
 PACKAGE_LB=app/lb
 PACKAGE_NODE=app/node
@@ -13,6 +16,9 @@ DOCKERFILE_LB=Dockerfile.lb
 DOCKERFILE_NODE=Dockerfile.node
 DOCKER_IMAGE_LB=planserver-lb:$(VERSION)
 DOCKER_IMAGE_NODE=planserver-node:$(VERSION)
+
+DOCKER_IMAGE_TAG_LB=$(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_PROJECT)/$(DOCKER_IMAGE_LB)
+DOCKER_IMAGE_TAG_NODE=$(DOCKER_REGISTRY)/$(DOCKER_REGISTRY_PROJECT)/$(DOCKER_IMAGE_NODE)
 
 BINARY_LB=lb-app
 BINARY_NODE=node-app
@@ -83,5 +89,18 @@ docker-test-node:
 build-docker-image: build-docker-image-lb build-docker-image-node
 build-docker-image-lb: docker-build-lb
 	docker build -f $(DOCKERFILE_LB) -t $(DOCKER_IMAGE_LB) .
+	docker system prune --force
 build-docker-image-node: docker-build-node
 	docker build -f $(DOCKERFILE_NODE) -t $(DOCKER_IMAGE_NODE) .
+	docker system prune --force
+
+# Push docker image
+push-docker-image: push-docker-image-lb push-docker-image-node
+push-docker-image-lb:
+	docker tag $(DOCKER_IMAGE_LB) $(DOCKER_IMAGE_TAG_LB)
+	docker push $(DOCKER_IMAGE_TAG_LB)
+	docker rmi $(DOCKER_IMAGE_TAG_LB)
+push-docker-image-node:
+	docker tag $(DOCKER_IMAGE_NODE) $(DOCKER_IMAGE_TAG_NODE)
+	docker push $(DOCKER_IMAGE_TAG_NODE)
+	docker rmi $(DOCKER_IMAGE_TAG_NODE)
