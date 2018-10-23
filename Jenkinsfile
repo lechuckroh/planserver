@@ -1,3 +1,4 @@
+env.VERSION="3.0.$BUILD_ID"
 node {
     try {
         stage('Checkout') {
@@ -13,7 +14,11 @@ node {
         }
 
         stage('Build docker image') {
-            sh 'make build-docker-image'
+            sh "VERSION=$VERSION make build-docker-image"
+        }
+
+        stage('Push docker image') {
+            sh "VERSION=$VERSION make push-docker-image"
         }
     } catch (e) {
         currentBuild.result = 'FAILED'
